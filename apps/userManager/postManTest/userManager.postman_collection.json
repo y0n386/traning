@@ -1,0 +1,281 @@
+{
+	"variables": [],
+	"info": {
+		"name": "appUserManager",
+		"_postman_id": "8536cb72-8e03-8738-18cd-1f9d8459150b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "127",
+			"description": "",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"url": "127.0.0.1/app/userManager/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"mrak15\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "getCaptcha",
+					"request": {
+						"url": "127.0.0.1/app/userManager/getCaptcha",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"mra1001\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "getProfile",
+					"request": {
+						"url": "127.0.0.1/app/userManager/profile",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"mra1001\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "editProfile",
+					"request": {
+						"url": "127.0.0.1/app/userManager/profile",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \r\n   \"firstName\":\"مصطفی\",\r\n   \"lastName\":\"مرتضوی\",\r\n   \"gender\":0,\r\n   \"fatherName\":\"علی اصغر\",\r\n   \"identityNumber\":18621,\r\n   \"identitySerialNumber\":\"الف/26 123456\",\r\n   \"birthday\":\"1367/06/12\",\r\n   \"education\":\"فوق لیسانس ریاضی\",\r\n   \"email\":\"mrak100110@gmail.com\",\r\n   \"cellphoneNumbers\":[\r\n      {\r\n         \"id\":0,\r\n         \"value\":\"09151598034\"\r\n      },\r\n      {\r\n         \"id\":1,\r\n         \"value\":\"09031598034\"\r\n      }\r\n   ],\r\n   \"addresses\":[\r\n      {\r\n         \"id\":0,\r\n         \"province\":\"خراسان رضوی\",\r\n         \"city\":\"مشهد\",\r\n         \"street\":\"امامیه\",\r\n         \"alley\":\"67\",\r\n         \"number\":10,\r\n         \"address\":\"مجتمع بهزیست، بلوک 5\",\r\n         \"postalCode\":9179991799,\r\n         \"tels\":[\r\n            {\r\n               \"id\":0,\r\n               \"value\":\"36217793\"\r\n            }\r\n         ]\r\n      }\r\n   ],\r\n   \"jobs\":[\r\n      {\r\n         \"id\":0,\r\n         \"job\":\"برنامه نویس\",\r\n         \"post\":\"سرور\",\r\n         \"averageSalary\":15000000,\r\n         \"companyName\":\"پارت\",\r\n         \"companyActivity\":\"اقتصادی\",\r\n         \"postalCode\":1234567890,\r\n         \"tels\":[\r\n            {\r\n               \"id\":0,\r\n               \"value\":\"38593380\"\r\n            },\r\n            {\r\n               \"id\":1,\r\n               \"value\":\"38593384\"\r\n            }\r\n         ],\r\n         \"faxes\":[\r\n            {\r\n               \"id\":0,\r\n               \"value\":\"38593380\"\r\n            }\r\n         ]\r\n      }\r\n   ]\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "checkAuthenticatePack",
+					"request": {
+						"url": {
+							"raw": "127.0.0.1/app/userManager/checkAuthenticatePack?username=mrak1",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"path": [
+								"app",
+								"userManager",
+								"checkAuthenticatePack"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "mrak1",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"mra1001\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "checkProfile",
+					"request": {
+						"url": {
+							"raw": "127.0.0.1/app/userManager/checkProfile?idNumber=1234554321",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"path": [
+								"app",
+								"userManager",
+								"checkProfile"
+							],
+							"query": [
+								{
+									"key": "idNumber",
+									"value": "1234554321",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"mra1001\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "changeAuthenticatePack",
+					"request": {
+						"url": "127.0.0.1/app/userManager/changeAuthenticatePack",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"mrak1\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUser",
+					"request": {
+						"url": "127.0.0.1/app/userManager/deleteUser",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\":\"123456\",\n\t\"newUsername\":\"mra1002\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "signUp-legal",
+					"request": {
+						"url": "127.0.0.1/app/userManager/signUp",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\":\"legalUser1\",\r\n  \"type\": \"legal\",\r\n  \"legalType\":\"normal\",\r\n  \"companyName\": \"تلابفلیز\",\r\n  \"activityField\": \"تضامنی\",\r\n  \"email\": \"mrak100110@gmail.com\",\r\n  \"addresses\": [\r\n    {\r\n      \"tels\": [\r\n        {\r\n          \"value\": \"05136541236\"\r\n        }\r\n      ],\r\n      \"province\": \"خراسان\",\r\n      \"city\": \"مشهد\",\r\n      \"address\": \"یسیس\",\r\n      \"postalCode\": 1910190191\r\n    }\r\n  ],\r\n  \"establishmentAnnouncements\": [\r\n    {\r\n      \"data\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAACxMAAAsTAQCanBgAAAFCSURBVDjLpdM9S1xREAbgZy/X4CaE+LFgEklnWLSxtJGAfyCgbCOIRfqkyz+wSClEC0ELOyGF1WJjlcJSCfYiRtJF1PhFPrwWd0IOukbFac7MHM4778w7p1IUhftYpahW5/ASFWQocIAVLOBXi3cTeIPdHMMYwG8cow0P8RrtmG4B0IcRfM1wEsk1NPAO3yL3Ho9aAPyM8zgP6rCD1fCfYgo1dAezliPIkiD1T5NKJ/5jeeI/QT2qTkauie+3BXiFZfSgCxt4G6pcayntc5zhKOJ2vHCDpQCflSqM4gv68eEuAD+whXX/1KijEzP4hKGE7RWAtsQ/jPOBcqnGgt3zy7PLkyGlw/qT3J9iD8+ivbMAg/1MKR88TgD+Lk4tWpiPeBxLGIx4OsdH9GIzAWgq5cyUmzgbbTXQgW0sYrVy3+98AemDQ4qngPQBAAAAAElFTkSuQmCC\"\r\n    }\r\n  ],\r\n  \"latestChanges\": [\r\n    {\r\n      \r\n      \"data\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAACxMAAAsTAQCanBgAAAFCSURBVDjLpdM9S1xREAbgZy/X4CaE+LFgEklnWLSxtJGAfyCgbCOIRfqkyz+wSClEC0ELOyGF1WJjlcJSCfYiRtJF1PhFPrwWd0IOukbFac7MHM4778w7p1IUhftYpahW5/ASFWQocIAVLOBXi3cTeIPdHMMYwG8cow0P8RrtmG4B0IcRfM1wEsk1NPAO3yL3Ho9aAPyM8zgP6rCD1fCfYgo1dAezliPIkiD1T5NKJ/5jeeI/QT2qTkauie+3BXiFZfSgCxt4G6pcayntc5zhKOJ2vHCDpQCflSqM4gv68eEuAD+whXX/1KijEzP4hKGE7RWAtsQ/jPOBcqnGgt3zy7PLkyGlw/qT3J9iD8+ivbMAg/1MKR88TgD+Lk4tWpiPeBxLGIx4OsdH9GIzAWgq5cyUmzgbbTXQgW0sYrVy3+98AemDQ4qngPQBAAAAAElFTkSuQmCC\"\r\n    }\r\n  ],\r\n  \"registrationNumber\": 12365,\r\n  \"registrationDate\": \"1396/01/01\",\r\n  \"nationalId\": \"11111111118\",\r\n  \"password\":\"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "signUp-real",
+					"request": {
+						"url": "127.0.0.1/app/userManager/signUp",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\":\"mrak15\",\r\n  \"type\":\"real\",\r\n  \"firstName\": \"محمد\",\r\n  \"lastName\": \"رحمتی\",\r\n  \"gender\": 0,\r\n  \"fatherName\": \"علی اصغر\",\r\n  \"identityNumber\": 18621,\r\n  \"identitySerialNumber\": \"الف/26 123456\",\r\n  \"idNumber\": \"1244554421\",\r\n  \"birthday\": \"1367/06/12\",\r\n  \"education\": \"فوق لیسانس ریاضی\",\r\n  \"email\": \"mrak100110@gmail.com\",\r\n  \"cellphoneNumbers\": [\r\n    {\r\n      \"value\": \"09151598034\"\r\n    },\r\n    {\r\n      \"value\": \"09031598034\"\r\n    }\r\n  ],\r\n  \"addresses\": [\r\n    {\r\n      \"province\": \"خراسان رضوی\",\r\n      \"city\": \"مشهد\",\r\n      \"street\": \"امامیه\",\r\n      \"alley\": \"67\",\r\n      \"number\": 10,\r\n      \"address\": \"مجتمع بهزیست، بلوک 5\",\r\n      \"postalCode\": 9187153533,\r\n      \"tels\": [\r\n        {\r\n          \"value\": \"36217793\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"jobs\": [\r\n    {\r\n      \"job\": \"برنامه نویس\",\r\n      \"post\": \"سرور\",\r\n      \"averageSalary\": 15000000,\r\n      \"companyName\": \"پارت\",\r\n      \"companyActivity\": \"اقتصادی\",\r\n      \"postalCode\": 1234567890,\r\n      \"tels\": [\r\n        {\r\n          \"value\": \"38593380\"\r\n        },\r\n        {\r\n          \"value\": \"38593384\"\r\n        }\r\n      ],\r\n      \"faxes\": [\r\n        {\r\n          \"value\": \"38593380\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"identityCards\": [\r\n    {\r\n      \"name\": \"file name1\",\r\n      \"description\": \"file description1\",\r\n      \"data\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAACxMAAAsTAQCanBgAAAFCSURBVDjLpdM9S1xREAbgZy/X4CaE+LFgEklnWLSxtJGAfyCgbCOIRfqkyz+wSClEC0ELOyGF1WJjlcJSCfYiRtJF1PhFPrwWd0IOukbFac7MHM4778w7p1IUhftYpahW5/ASFWQocIAVLOBXi3cTeIPdHMMYwG8cow0P8RrtmG4B0IcRfM1wEsk1NPAO3yL3Ho9aAPyM8zgP6rCD1fCfYgo1dAezliPIkiD1T5NKJ/5jeeI/QT2qTkauie+3BXiFZfSgCxt4G6pcayntc5zhKOJ2vHCDpQCflSqM4gv68eEuAD+whXX/1KijEzP4hKGE7RWAtsQ/jPOBcqnGgt3zy7PLkyGlw/qT3J9iD8+ivbMAg/1MKR88TgD+Lk4tWpiPeBxLGIx4OsdH9GIzAWgq5cyUmzgbbTXQgW0sYrVy3+98AemDQ4qngPQBAAAAAElFTkSuQmCC\"\r\n    },\r\n    {\r\n      \"name\": \"file name2\",\r\n      \"description\": \"file description2\",\r\n      \"data\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAACxMAAAsTAQCanBgAAAFCSURBVDjLpdM9S1xREAbgZy/X4CaE+LFgEklnWLSxtJGAfyCgbCOIRfqkyz+wSClEC0ELOyGF1WJjlcJSCfYiRtJF1PhFPrwWd0IOukbFac7MHM4778w7p1IUhftYpahW5/ASFWQocIAVLOBXi3cTeIPdHMMYwG8cow0P8RrtmG4B0IcRfM1wEsk1NPAO3yL3Ho9aAPyM8zgP6rCD1fCfYgo1dAezliPIkiD1T5NKJ/5jeeI/QT2qTkauie+3BXiFZfSgCxt4G6pcayntc5zhKOJ2vHCDpQCflSqM4gv68eEuAD+whXX/1KijEzP4hKGE7RWAtsQ/jPOBcqnGgt3zy7PLkyGlw/qT3J9iD8+ivbMAg/1MKR88TgD+Lk4tWpiPeBxLGIx4OsdH9GIzAWgq5cyUmzgbbTXQgW0sYrVy3+98AemDQ4qngPQBAAAAAElFTkSuQmCC\"\r\n    }\r\n  ],\r\n  \"idCards\": [\r\n    {\r\n      \"name\": \"file name3\",\r\n      \"description\": \"file description3\",\r\n      \"data\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAACxMAAAsTAQCanBgAAAFCSURBVDjLpdM9S1xREAbgZy/X4CaE+LFgEklnWLSxtJGAfyCgbCOIRfqkyz+wSClEC0ELOyGF1WJjlcJSCfYiRtJF1PhFPrwWd0IOukbFac7MHM4778w7p1IUhftYpahW5/ASFWQocIAVLOBXi3cTeIPdHMMYwG8cow0P8RrtmG4B0IcRfM1wEsk1NPAO3yL3Ho9aAPyM8zgP6rCD1fCfYgo1dAezliPIkiD1T5NKJ/5jeeI/QT2qTkauie+3BXiFZfSgCxt4G6pcayntc5zhKOJ2vHCDpQCflSqM4gv68eEuAD+whXX/1KijEzP4hKGE7RWAtsQ/jPOBcqnGgt3zy7PLkyGlw/qT3J9iD8+ivbMAg/1MKR88TgD+Lk4tWpiPeBxLGIx4OsdH9GIzAWgq5cyUmzgbbTXQgW0sYrVy3+98AemDQ4qngPQBAAAAAElFTkSuQmCC\"\r\n    }\r\n  ],\r\n  \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"url": "127.0.0.1/app/userManager/logout",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"mra1001\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

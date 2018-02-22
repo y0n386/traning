@@ -1,0 +1,50 @@
+{
+  "moduleType": "app",
+  "name": "userManager",
+  "main": "./main.js",
+  "version": "4.1.0",
+  "releaseNote": {
+    "1.0.0": [
+      {
+        "title": "login,signUp,forgetPassword,setPass,checkUser,checkProfile,changePass,changeUser,deleteUser,getCaptcha,getProfile,logout",
+        "type": "mager",
+        "desc": "تمام هندلر های ذکر شده با داکیومنت انجام و تست شد"
+      }
+    ],
+    "2.0.0": [
+      {
+        "title": "تغییر ساختار کلیه هندلر ها و قابلیت کانفیگ کردن توابع استفاده شده",
+        "type": "mager",
+        "desc": "تمام هندلر های ذکر شده قابلیت حذف و اضافه شدن توابع مورد استفاده خود را دارند"
+      }
+    ],
+    "3.0.0": [
+      {
+        "title": "هماهنگ سازی با نسخه جدید پروفایل و تصدیق اصالت",
+        "type": "mager",
+        "desc": "هماهنگ سازی با نسخه جدید پروفایل و تصدیق اصالت"
+      }
+    ],
+    "template": [
+      {
+        "title": "هماهنگ سازی با نسخه جدید پروفایل و تصدیق اصالت",
+        "type": "mager",
+        "desc": "هماهنگ سازی با نسخه جدید پروفایل و تصدیق اصالت"
+      },
+      {
+        "title": "افزودن ویژگی مرا به خاطر بسپار",
+        "type": "feature",
+        "desc": "افزودن ویژگی مرا به خاطر بسپار"
+      }
+    ]
+  },
+  "dependencies": {
+    "partUtilities": "3.11.1",
+    "partRedisInterface": "2.0.4",
+    "partLogger": "3.0.1",
+    "partDocumentInterface": "7.0.1",
+    "partUserManager": "3.0.2",
+    "emailjs": "1.0.12",
+    "q": "0.9.7"
+  }
+}

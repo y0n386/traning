@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: httpHandlers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: httpHandlers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// create by Mohammad Rahmati 1396/08/05
+/**
+ * @namespace userManager\http
+ */
+let u = require('partUtilities'),
+  config = require('./config.js'),
+  db = require('./db'),
+  schema = require('./schema'),
+  log = config.log,
+  email = require('emailjs'),
+  q = require('q');
+
+exports.httpHandlers = {
+  login: {
+    POST: {
+      name: 'ورود',
+      description: 'ورود به سیستم',
+      function: login,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.loginData(headers, data))
+      },
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen(config.version, "Mohammad Rahmati")
+    }
+  },
+  signUp: {
+    PUT: {
+      name: 'signUp',
+      description: 'ثبتنام',
+      function: signUp,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.signUp(headers, data));
+      },
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  },
+  forgetPassword: {
+    POST: {
+      function: forgetPassword,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.forgetPassword(headers, data));
+      },
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen(config.version, "Mohammad Rahmati")
+    }
+  },
+  setPass: {
+    POST: {
+      function: setPass,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.setPassData(headers, data));
+      }
+    },
+    HEAD: {
+      function: u.metaHandlerGen(config.version, "Mohammad Rahmati")
+    }
+  },
+  checkUser: {
+    GET: {
+      name: '',
+      description: '',
+      function: checkUser,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.checkUser(headers, data));
+      },
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  },
+  checkProfile: {
+    GET: {
+      name: '',
+      description: '',
+      function: checkProfile,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.checkProfile(headers, data));
+      },
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  },
+  changePass: {
+    POST: {
+      name: '',
+      description: '',
+      function: changePass,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.changePass(headers, data));
+      },
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  },
+  changeUser: {
+    POST: {
+      name: '',
+      description: '',
+      function: changeUser,
+      dataSchema: function (headers, data, session, callback) {
+        callback(null, schema.changeUser(headers, data));
+      },
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  },
+  deleteUser: {
+    GET: {
+      name: '',
+      description: '',
+      function: deleteUser,
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  },
+  getCaptcha: {
+    GET: {
+      name: 'دریافت کپچا',
+      description: 'تصویر کپچا را اگر فعال باشد به کاربر ارسال می کند.',
+      function: getCaptcha,
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen(config.version, "Mohammad Rahmati")
+    }
+  },
+  getProfile: {
+    GET: {
+      name: '',
+      description: '',
+      function: getProfile,
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  },
+  logout: {
+    GET: {
+      name: 'خروج',
+      description: 'خروج از سیستم',
+      function: logout,
+      csrfToken: false
+    },
+    HEAD: {
+      function: u.metaHandlerGen("1.0.0", "Mohammad Rahmati")
+    }
+  }
+};
+
+/**
+ *  چک کردن اعتبار کپچا
+ * @memberOf userManager\http
+ * @param request آبجکت استاندارد نود  {!object}
+ * @param response آبجکت استاندارد نود  {!object}
+ * @param token توکن ساخته شده از لاگین {!string}
+ * @param expireTime {!string}
+ * @param data {!object}  داده لازم برای ارسال به کلاینت
+ * @param data.email {!string}   ایمیل
+ * @param data.firstName {?string} نام
+ * @param data.lastName {?string}  نام خانوادگی
+ * @param data.idNumber {?string}  کد ملی
+ * @param data.nationalId {?string}  شناسه ملی شرکت
+ * @param data.companyName {?string}  نام شرکت
+ * @param data.type {!string}  نوع کاربر
+ * @param data.status {!string}  وضعیت کاربر
+ * @param metaData {!object} آبجکت برای تنظیم هدر
+ * @return {undefined}
+ */
+function setCookie(request, response, token, expireTime, data, metaData) {
+  let time = new Date(expireTime),
+    hostname = request.headers.host.indexOf(':') > 0 ? request.headers.host.substr(0, request.headers.host.indexOf(':')) : request.headers.host;
+  for (let key in metaData) {
+    if (metaData.hasOwnProperty(key)) {
+      response.setHeader(key, metaData[key]);
+    }
+  }
+  response.writeHead(200, {
+    'Content-Type': 'application/json',
+    'Set-Cookie': 'token=' + token + '; expires=' + time.toUTCString() + '; Path=/' + '; Domain=' + hostname
+  });
+  response.end(JSON.stringify({data: data, status: 'success'}));
+}
+/**
+ * ورود به سیستم  بعد از مراحل مربوط به اعتبار سنجی داده دریافتی در سشن ذخیره میگردد.
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data.username {!string} نام کاربری
+ * @param request.data.password {!string} رمز عبور
+ * @param request.data.captcha {?object} ابجکت کپچا
+ * @param request.data.captcha.token {?string} توکن
+ * @param request.data.captcha.value {?string} مقدار وارد شده توسط کاربر برای کپچا
+ * @example {
+    "data": {
+        "roles": [
+            ""
+        ],
+        "status": "",
+        "type": "",
+        "idNumber": "",
+        "email": "",
+        "username": "",
+        "token": ""
+    },
+    "status": "success"
+}
+ * @return {success|actionError}
+
+ */
+function login(request, response) {
+//    اعتبارسنجی ورودی ها
+  let values = {
+    username: request.data.username || '',
+    password: request.data.password || ''
+  };
+  if (config.useCaptcha.login) {
+    values.token = (request.data.hasOwnProperty('captcha') &amp;&amp; request.data.captcha.token) || '';
+    values.value = (request.data.hasOwnProperty('captcha') &amp;&amp; request.data.captcha.value) || '';
+  }
+  if (request.data.hasOwnProperty('rememberMe')) {
+    values.rememberMe = request.data.rememberMe;
+  }
+//    بررسی صحت کپچای وارد شده
+  if (config.useCaptcha.login) {
+    checkCaptcha(values)
+      .then(function () {
+        doLogin(values);
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(error, u.metaGen(config.version, "Mohammad Rahmati"), 400);
+      });
+  }
+  else {
+    doLogin(values);
+  }
+
+  function doLogin(values) {
+    let filter = ['idNumber', 'email', 'type', 'nationalId', 'status'];
+    config.PartUserManagerInstance.login(values, filter)
+      .then(function (result) {
+        let dataSend = result;
+        console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv', dataSend);
+        request.session.start(dataSend.token, dataSend,
+          function (err, res) {
+            if (err) {
+              log.error(config.e.connectDBError, err);
+              throw err;
+            }
+            request.session.set(dataSend, function (err2) {
+              if (err2) {
+                log.error(config.e.connectDBError, err2);
+                throw err2;
+              }
+              setCookie(request, response, res.token, res.expireTime, dataSend, u.metaGen(config.version, "Mohammad Rahmati"));
+            });
+          });
+      })
+      .fail(function (error) {
+        log.error(config.e.actionError, error);
+        response.sendFail(!error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+      });
+  }
+
+}
+/**
+ * ثبتنام    بعد از بررسی تکراری نبودن پروفایل و نام کاربری مراحل ثبتنام انجام میگردد.
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data {!object} ابجکت استاندارد ورودی سرور
+ * @param request.data.type {!number} نوع ثبتنام
+ * @param request.data.firstName {!string} نام
+ * @param request.data.lastName {!string} نام خانوادگی
+ * @param request.data.gender {!string|!number} جنسیت
+ * @param request.data.fatherName {!string} نام پدر
+ * @param request.data.identityNumber {!string} شماره شناسنامه
+ * @param request.data.identitySerialNumber {!string} سریال شناسنامه
+ * @param request.data.idNumber {!string} کد ملی
+ * @param request.data.birthday {!string} تارخ تولد
+ * @param request.data.education {?string} تحصیلات
+ * @param request.data.email {!string} رایانامه
+ * @param request.data.cellphoneNumbers {!object[]} مشخصات تلفن
+ * @param request.data.cellphoneNumbers[].value {!string} مقدار تلفن
+ * @param request.data.addresses {!object[]} مشخصات آدرس
+ * @param request.data.addresses[].province{?String}  استان
+ * @param request.data.addresses[].city{?String}  شهر
+ * @param request.data.addresses[].street{?String}  خیابان
+ * @param request.data.addresses[].alley{?String}  کوچه
+ * @param request.data.addresses[].number{?Number}  پلاک
+ * @param request.data.addresses[].address{?String}  نشانی منزل
+ * @param request.data.addresses[].postalCode{?Number} [10 digits]  کد پستی
+ * @param request.data.addresses[].tels{?object[]} مشخصات تلفن
+ * @param request.data.addresses[].tels[].value {!string} مقدار تلفن
+ * @param request.data.tradingCode {?string} کد بورسی
+ * @param request.data.hasTrading {?string} سابقه خرید و فروش قبلی  0 / 1
+ * @param request.data.jobs {?object[]}  مشخصات شغل
+ * @param request.data.jobs[].job {!string} شغل
+ * @param request.data.jobs[].post {?string} سمت
+ * @param request.data.jobs[].averageSalary {?string} متوسط درآمد ماهیانه
+ * @param request.data.jobs[].companyName {?string}   نام سازمان / شرکت / محل کار
+ * @param request.data.jobs[].companyActivity {?string} ماهیت فعالیت شرکت
+ * @param request.data.jobs[].postalCode {?string} کد پستی محل کار
+ * @param request.data.jobs[].tels {?object[]} تلفن محل کار
+ * @param request.data.jobs[].tels[].value {!string} مقدار
+ * @param request.data.jobs[].faxes {?object[]} فکس محل کار
+ * @param request.data.jobs[].faxes[].value {!string} مقدار
+ * @param request.data.idCards {!string} تصویر کارت ملی
+ * @param request.data.identityCards {!string} تصویر شناسنامه
+ * @param request.data.companyName {!string} نام شرکت
+ * @param request.data.website {?string} وبسایت شرکت
+ * @param request.data.activityField {!string} زمینه فعالیت
+ * @param request.data.registrationNumber {!string} شماره ثبت
+ * @param request.data.registrationDate {!string} تاریخ ثبت
+ * @param request.data.nationalId {!string} شناسه ملی شرکت
+ * @param request.data.establishmentAnnouncements {!object[]} فایل اسکن شده از آگهی تاسیس شرکت
+ * @param request.data.establishmentAnnouncements.data {!string}
+ * @param request.data.latestChanges {!string} آخرین تغییرات
+ * @return {success | duplicateUser | actionError}
+ * @example{
+          data:{password:""}
+          status:"success"
+          }
+ */
+function signUp(request, response) {
+  request.data.role = 'visitor';
+  if (config.useCaptcha.signUp) {
+    checkCaptcha(request.data.captcha)
+      .then(function () {
+        doSignUp(request.data);
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(error.message ? error : config.e.duplicateUser, u.metaGen(config.version, "Mohammad Rahmati"), 400);
+      });
+  }
+  else {
+    doSignUp(request.data);
+  }
+  function doSignUp(data) {
+    config.PartUserManagerInstance.checkProfile({type: data.type, uniqueKey: data.idNumber || data.nationalId})
+      .then(function () {
+        config.PartUserManagerInstance.checkUser(data)
+          .then(function () {
+            config.PartUserManagerInstance.signUp(data)
+              .then(function (result) {
+                response.sendOk({data: result}, u.metaGen(config.version, "Mohammad Rahmati"));
+              })
+              .fail(function (error) {
+                log.error(config.e.actionError, error);
+                response.sendFail(error.message ? error : config.e.duplicateUser, u.metaGen(config.version, "Mohammad Rahmati"));
+              });
+          })
+          .fail(function (error) {
+            log.error(config.e.actionError, error);
+            response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+          });
+      })
+      .fail(function (error) {
+        log.error(config.e.actionError, error);
+        response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+      });
+  }
+}
+/**
+ * بررسی صحت متن وارد شده کاربر برای کپچا
+ * @memberOf userManager\http
+ * @param values {!object} ابجکت محتوای کپچا
+ * @param values.token {!string}  توکن
+ * @param values.value {!string} مقدار وارد شده کاربر
+ * @return{undefined|connectCaptchaError}
+ */
+function checkCaptcha(values) {
+  let defer = q.defer();
+  u.sendPOSTRequest(config.captchaOptions, 'check', {
+    token: values.token,
+    value: values.value
+  })
+    .then(function () {
+      defer.resolve();
+    })
+    .fail(function (error) {
+      defer.reject(error);
+      log.error(config.e.connectCaptchaError, error);
+    });
+  return defer.promise;
+}
+/**
+ * دریافت کپچا
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @return {success|connectCaptchaError}
+ * @example {
+    "data": {
+        "img": "",
+        "token": ""
+    },
+    "status": "success",
+    "shamsiDate": 13960807182341344,
+   // or
+    "data": {
+       token: null,
+      img: null,
+      message: 'Captcha is disabled.
+      }
+}
+ */
+function getCaptcha(request, response) {
+  if (config.useCaptcha.getCaptcha) {
+    let options = config.captchaOptions;
+    options.method = 'GET';
+    u.sendRequest(options, 'get')
+      .then(function (result) {
+        try {
+          if (result.status === 'error') {
+            response.sendFail(result.error, u.metaGen(config.version, "Mohammad Rahmati"));
+            return;
+          }
+          response.sendOk(result, u.metaGen(config.version, "Mohammad Rahmati"));
+        }
+        catch (error) {
+          log.error(config.e.connectCaptchaError, error);
+          response.sendFail(config.e.connectCaptchaError, u.metaGen(config.version, "Mohammad Rahmati"));
+        }
+      })
+      .fail(function (error) {
+        log.error(config.e.connectCaptchaError, error);
+        response.sendFail(config.e.connectCaptchaError, u.metaGen(config.version, "Mohammad Rahmati"));
+      });
+  }
+  else {
+    response.sendOk({
+      data: {
+        token: null,
+        img: null,
+        message: 'Captcha is disabled.'
+      }
+    }, u.metaGen(config.version, "Mohammad Rahmati"));
+  }
+}
+/**
+ * فراموشی رمز عبور
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data.username {!string}  نام کاربری
+ * @return {success|actionError}
+ */
+function forgetPassword(request, response) {
+  if (config.useCaptcha.forgetPassword) {
+    checkCaptcha(request.data.captcha)
+      .then(function () {
+        continuationForgetPassword(request.data);
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(error, u.metaGen(config.version, "Mohammad Rahmati"), 400);
+      });
+  }
+  else {
+    continuationForgetPassword(request.data)
+  }
+  function continuationForgetPassword(data) {
+    let defer = q.defer();
+    config.PartUserManagerInstance.getUser({username: request.data.username})
+      .then(function (result) {
+        let type;
+        if (result.data.real) {
+          type = 'real';
+          result = result.data.real[0];
+        }
+        else {
+          type = 'legal';
+          result = result.data.legal[0];
+        }
+        if (!result.email) {
+          throw config.e.infoNotFound;
+        }
+        data = {
+          username: data.username,
+          type: type,
+          email: result.email
+        };
+        let defer = q.defer(),
+          crypto = require('crypto'),
+          token = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex') + u.getPersianDateTime(),
+          link = config.nextLink + token,
+          options = {
+            text: "فراموشی رمز عبور",
+            from: "info@rasamfunds.com",
+            to: data.email,
+            cc: "",
+            subject: "ارسال لینک تغییر رمز عبور",
+            attachment: [
+              {
+                data: "&lt;!DOCTYPE html>\
+                        &lt;html>\
+                        &lt;head>\
+                        &lt;meta charset='utf-8'>\
+                        &lt;meta http-equiv='X-UA-Compatible' content='IE=edge'>\
+                        &lt;title>لینک تغییر رمز عبور&lt;/title>\
+                        &lt;/head>\
+                        &lt;div style='text-align:center;border-top: 3px solid #00b0ff;width: 100%'>\
+                        &lt;p>" + link + "&lt;/p>\
+                        &lt;/div>\
+                        &lt;/html>",
+                alternative: true
+              }
+
+            ]
+          };
+        sendEmail(options, function (error) {
+          if (error) {
+            log.error(config.e.actionError, error);
+            response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+          }
+          data.token = token;
+          data.repeat = 0;
+          db.saveInfoInRedis(data);
+          defer.resolve();
+        })
+      })
+      .fail(function (error) {
+        log.error(config.e.actionError, error);
+        response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+      });
+    return defer.promise;
+  }
+}
+/**
+ * تنظیم رمز عبور جدید بعد از فراموشی رمز عبور     بعد از دریافت اطلاعات از ردیس با استفاده از توکن دریافتی بررسی میشود که آیا نام کاربری ارسال شده
+ * با نام کاربری موجود در ردیس برابر هست یا نه که این کار در صورت اشتباه بودن تا سه مرتبه مجاز است و در صورت درست بودن پسورد جدید برای
+ * نام کاربری تنظیم شده از قبل در ردیس ، ست میشود.
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data.username {!string}  نام کاربری
+ * @param request.data.token {!string}  توکن
+ * @param request.data.newPassword {!string}  پسورد جدید
+ * @return { success | accessDenied| requestExpired | actionError| connectDBError}
+ */
+function setPass(request, response) {
+  if (config.useCaptcha.setPass) {
+    checkCaptcha(request.data.captcha)
+      .then(function () {
+        continuationSetPass();
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(error, u.metaGen(config.version, "Mohammad Rahmati"), 400);
+      });
+  }
+  else {
+    continuationSetPass();
+  }
+
+  function continuationSetPass() {
+    db.getInfoByToken(request.data.token)
+      .then(function (userInfo) {
+        if (!userInfo) {
+          response.sendFail(config.e.accessDenied, u.metaGen(config.version, "Mohammad Rahmati"), 404);
+          return;
+        }
+        if (userInfo) {
+          if (request.data.username !== userInfo.username) {
+            log.error(config.e.requestNotBelongToThisUser);
+            if (userInfo.repeat > 2) {
+              db.deleteInfoByToken(request.data.token);
+              response.sendFail(config.e.requestExpired, u.metaGen(config.version, "Mohammad Rahmati"), 404);
+            }
+            else {
+              userInfo.repeat = +userInfo.repeat + 1;
+              db.saveInfoInRedis(u.cloneObject(userInfo));
+              response.sendFail(config.e.requestNotBelongToThisUser, u.metaGen(config.version, "Mohammad Rahmati"), 404);
+            }
+            return;
+          }
+          let dataSend = {};
+          dataSend.username = userInfo.username;
+          dataSend.newPassword = request.data.newPassword;
+          config.PartUserManagerInstance.setPass(dataSend)
+            .then(function () {
+              response.sendOk({}, u.metaGen(config.version, "Mohammad Rahmati"));
+            })
+            .fail(function (error) {
+              log.error(config.e.actionError, error);
+              response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+            });
+        }
+        else {
+          log.error(config.e.requestExpired);
+          response.sendFail(config.e.connectDBError, u.metaGen(config.version, "Mohammad Rahmati"), 404);
+        }
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(config.e.connectDBError, u.metaGen(config.version, "Mohammad Rahmati"), 404);
+      })
+  }
+
+}
+/**
+ * بررسی تکراری بودن یا نبودن نام کاربری
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data.username {!string}  نام کاربری
+ * @return {success|duplicateUser|actionError}
+ */
+function checkUser(request, response) {
+  if (config.useCaptcha.checkUser) {
+    checkCaptcha(request.data.captcha)
+      .then(function () {
+        doCheckUser(request.data);
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(error, u.metaGen(config.version, "Mohammad Rahmati"), 400);
+      });
+  }
+  else {
+    doCheckUser(request.data);
+  }
+  function doCheckUser(data) {
+    console.log('da', data);
+    config.PartUserManagerInstance.checkUser(data)
+      .then(function () {
+        response.sendOk({}, u.metaGen(config.version, "Mohammad Rahmati"));
+      })
+      .fail(function (error) {
+        log.error(config.e.actionError, error);
+        response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+      });
+  }
+}
+/**
+ * بررسی تکراری بودن یا نبودن پروفایل که این کار از روی کد ملی یا شناسه ملی شرکت
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data.uniqueKey {!string} کد ملی یا شناسه ملی شرکت
+ * @return {success|duplicateUser|actionError}
+ */
+function checkProfile(request, response) {
+  let type = request.data.uniqueKey.toString().length > 10 ? 'legal' : 'real';
+  config.PartUserManagerInstance.checkProfile({type: type, uniqueKey: request.data.uniqueKey})
+    .then(function () {
+      response.sendOk({}, u.metaGen(config.version, "Mohammad Rahmati"));
+    })
+    .fail(function (error) {
+      log.error(config.e.actionError, error);
+      response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+    });
+}
+/**
+ * تغییر رمز عبور
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data.oldPassword {!string} پسورد قبلی
+ * @param request.data.newPassword {!string} پسورد جدید
+ * @return {success|actionError}
+ */
+function changePass(request, response) {
+  if (config.useCaptcha.changePass) {
+    checkCaptcha(request.data.captcha)
+      .then(function () {
+        doChangePass(request.data);
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(error, u.metaGen(config.version, "Mohammad Rahmati"), 400);
+      });
+  }
+  else {
+    doChangePass(request.data);
+  }
+  function doChangePass(data) {
+    request.session.get(['username'],
+      function (error, sessionGetResult) {
+        if (error) {
+          log.error(config.e.actionError, error);
+          response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+          return;
+        }
+        config.PartUserManagerInstance.changePass({
+          username: sessionGetResult.username,
+          oldPassword: data.oldPassword,
+          newPassword: data.newPassword
+        })
+          .then(function () {
+            response.sendOk({}, u.metaGen(config.version, "Mohammad Rahmati"));
+          })
+          .fail(function (error) {
+            log.error(config.e.actionError, error);
+            response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+          });
+      });
+  }
+}
+/**
+ * تغییر نام کاربری
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ * @param request.data.newUsername {!string} نام کاربری جدید
+ * @return {success|actionError}
+ */
+function changeUser(request, response) {
+  if (config.useCaptcha.changeUser) {
+    checkCaptcha(request.data.captcha)
+      .then(function () {
+        doChangeUser(request.data);
+      })
+      .fail(function (error) {
+        log.error(config.e.connectDBError, error);
+        response.sendFail(error, u.metaGen(config.version, "Mohammad Rahmati"), 400);
+      });
+  }
+  else {
+    doChangeUser(request.data);
+  }
+  function doChangeUser(data) {
+    request.session.get(['username'],
+      function (error, sessionGetResult) {
+        if (error) {
+          log.error(config.e.actionError, error);
+          response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+          return;
+        }
+        config.PartUserManagerInstance.changeUser({
+          oldUsername: sessionGetResult.username,
+          newUsername: data.newUsername
+        })
+          .then(function () {
+            response.sendOk({}, u.metaGen(config.version, "Mohammad Rahmati"));
+          })
+          .fail(function (error) {
+            log.error(config.e.actionError, error);
+            response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+          });
+      });
+  }
+}
+/**
+ * خروج از سیستم
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @return {success}
+ */
+function logout(request, response) {
+  request.session.remove(function (error, result) {
+    if (error) {
+      log.error(error);
+    }
+  });
+  setCookie(request, response, '', 0, {status: 'success'}, u.metaGen("1.0.0", "Mohammad Rahmati"));
+}
+/**
+ * دریافت اطلاعات پروفایل شخص
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {?object} آبجکت استاندارد ورودی سرور
+ * @param request.data.filter {?string[]} لیست فیلدهای سفارشی
+ * @example {
+    "data": {
+        "insertDate": 13960807170524402,
+        "status": "",
+        "type": "",
+        "firstName": "",
+        "lastName": "",
+        "gender": 0,
+        "maritalStatus": null,
+        "fatherName": " ",
+        "identityNumber": 18621,
+        "identitySerialNumber": "الف/26 123456",
+        "idNumber": "",
+        "birthday": "1367/06/12",
+        "education": "  ",
+        "email": "",
+        "cellphoneNumbers": [
+            {
+                "id": 0,
+                "value": ""
+            },
+            {
+                "id": 1,
+                "value": ""
+            }
+        ],
+        "addresses": [
+            {
+                "id": 0,
+                "province": "",
+                "city": "",
+                "street": "",
+                "alley": "67",
+                "number": 10,
+                "address": "،  ",
+                "postalCode": 9187153533,
+                "tels": [
+                    {
+                        "id": 0,
+                        "value": "36217793"
+                    }
+                ]
+            }
+        ],
+        "tradingCode": 1,
+        "knowledgeLevel": "",
+        "hasTrading": 0,
+        "jobs": [
+            {
+                "id": 0,
+                "job": "برنامه نویس",
+                "post": "سرور",
+                "averageSalary": 15000000,
+                "companyName": "پارت",
+                "companyActivity": "اقتصادی",
+                "postalCode": 1234567890,
+                "tels": [
+                    {
+                        "id": 0,
+                        "value": "38593380"
+                    },
+                    {
+                        "id": 1,
+                        "value": "38593384"
+                    }
+                ],
+                "faxes": [
+                    {
+                        "id": 0,
+                        "value": "38593380"
+                    }
+                ]
+            }
+        ],
+        "assets": null,
+        "accounts": [],
+        "profilePicture": [],
+        "identityCards": [
+            {
+                "id": 0,
+                "name": "file name1",
+                "description": "file description1",
+                "data": "file",
+                "status": ""
+            },
+            {
+                "id": 1,
+                "name": "file name2",
+                "description": "file description2",
+                "data": "file",
+                "status": ""
+            }
+        ],
+        "idCards": [
+            {
+                "id": 0,
+                "name": "file name3",
+                "description": "file description3",
+                "data": "file",
+                "status": ""
+            }
+        ],
+        "accountStatements": []
+    },
+    "status": "success",
+    "shamsiDate": 13960807185559984
+}
+ */
+function getProfile(request, response) {
+  let filter = request.data &amp;&amp; request.data.filter || [];
+  request.session.get(['username', 'type'],
+    function (error, sessionGetResult) {
+      if (error) {
+        log.error(config.e.actionError, error);
+        response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+        return;
+      }
+      let getUserProfile = {username: sessionGetResult.username};
+      if (filter.length) {
+        getUserProfile['filter'] = filter;
+      }
+      config.PartUserManagerInstance.getUser(getUserProfile)
+        .then(function (result) {
+          response.sendOk({data: result.data[sessionGetResult.type][0]}, u.metaGen(config.version, "Mohammad Rahmati"));
+        })
+        .fail(function (error) {
+          log.error(config.e.actionError, error);
+          response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+        });
+    });
+}
+/**
+ * پاک کردن حساب کاربری
+ * @memberOf userManager\http
+ * @param request {!object} آبجکت استاندارد نود
+ * @param response {!object} آبجکت استاندارد نود
+ * @param request.data {!object} آبجکت استاندارد ورودی سرور
+ */
+function deleteUser(request, response) {
+  request.session.get(['username', 'type', 'idNumber', 'nationalId'],
+    function (error, sessionGetResult) {
+      console.log('sessionGetResult----->', sessionGetResult);
+      if (error) {
+        log.error(config.e.actionError, error);
+        response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+        return;
+      }
+      let deleteUserData = {
+        username: sessionGetResult.username,
+        type: sessionGetResult.type,
+        uniqueKey: sessionGetResult.idNumber || sessionGetResult.nationalId
+      };
+      config.PartUserManagerInstance.deleteUser(deleteUserData)
+        .then(function (result) {
+          response.sendOk({}, u.metaGen(config.version, "Mohammad Rahmati"));
+        })
+        .fail(function (error) {
+          log.error(config.e.actionError, error);
+          response.sendFail(error.message ? error : config.e.actionError, u.metaGen(config.version, "Mohammad Rahmati"));
+        });
+    });
+}
+/**
+ * ارسال ایمیل
+ * @memberOf userManager\http
+ * @param options مشخصات ارسال ایمیل
+ * @param options.text  {string} تیتر ایمیل
+ * @param options.from  {string} ایمیل ارسال کننده
+ * @param options.to  {string} ایمیل دریافت کننده
+ * @param options.cc  {string} cc
+ * @param options.subject {string} موضوع
+ * @param options.attachment {object[]} فایل ضمیمه
+ * @param options.attachment[].data {string} محتوای اچ تی ام ال
+ * @param options.attachment[].alternative {boolean} true / false
+ * @param callback {function} تابع برگشتی
+ * @returns {success}
+ */
+function sendEmail(options, callback) {
+  let server = email.server.connect({
+    user: "info@rasamfunds.com",
+    password: "cpKzDnhp8Y",
+    host: "91.134.219.213",
+    ssl: false,
+    port: 587,
+    tls: true
+  });
+  return server.send(options, callback);
+}
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="userManager_db.html">userManager\db</a></li><li><a href="userManager_http.html">userManager\http</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Mon Oct 30 2017 09:21:28 GMT+0330 (Iran Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

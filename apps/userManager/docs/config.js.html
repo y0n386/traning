@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: config.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: config.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>let u = require('partUtilities'),
+  packageJson = u.getPackageJson(__dirname),
+  errorInfo = u.errorInfoGen(packageJson.moduleType, packageJson.name, packageJson.version),
+  PartRedisInterface = require('partRedisInterface'),
+  RedisInterface = new PartRedisInterface({
+    loggerConfig: {
+      global: {
+        mongoInterfaceConfig: {
+          host: '127.0.0.1',
+          port: 27017,
+          dbName: 'test',
+          dbUser: 'user',
+          dbPass: 'pass',
+          strictMode: true
+        }
+      },
+      instance: {}
+    }
+  }),
+  redisDb1 = new RedisInterface({
+    host: '127.0.0.1',
+    port: 6379,
+    db: 1,
+    log: {
+      view: true,
+      save: false
+    }
+  }),
+  partLoggerConfig = {
+    global: {
+      mongoInterfaceConfig: {
+        global: {},
+        instance: {
+          host: '127.0.0.1',
+          port: 27017,
+          dbName: 'test',
+          dbUser: 'user',
+          dbPass: 'pass',
+          strictMode: false
+        }
+      }
+    },
+    instance: {
+      sourceTypeWidth: 8,
+      sourceNameWidth: 20,
+      levelConfig: {
+        event: {
+          view: true,
+          save: false,
+          color: 'green',
+          viewPath: false
+        },
+        warning: {
+          view: true,
+          save: false,
+          color: 'yellowBg',
+          viewPath: true
+        },
+        error: {
+          view: true,
+          save: false,
+          color: 'redBg',
+          viewPath: true
+        }
+      }
+    }
+  },
+  PartLogger = require('partLogger'),
+  Logger = new PartLogger(partLoggerConfig.global),
+  log = new Logger(partLoggerConfig.instance),
+  partAuthenticationInterfaceConfig = {
+    global: {
+      protocol: 'http',
+      host: 'authentication.partdp.ir',
+      port: 80,
+      headers: {
+        user: 'test',
+        pass: '123456'
+      }
+    },
+    instance: {}
+  },
+  partProfileInterfaceConfig = {
+    global: {},
+    instance: {
+      protocol: 'http',
+      host: 'profile.partdp.ir',
+      port: 80,
+      headers: {
+        user: 'test',
+        pass: '123456'
+      }
+    }
+  },
+  partSamadInterfaceConfig = {
+    global: {
+      useProxy: true,
+      proxyConfig: {
+        protocol: 'http',
+        host: '192.168.1.75',
+        port: 90,
+        path: '/service/bargain/proxy',
+        headers: {
+          header: {
+            user: '10000000000',
+            pass: '123456'
+          }
+        }
+      }
+    },
+    instance: {
+      org: 'test'
+    }
+  },
+  partDocumentConfig = {
+    global: {
+      protocol: 'http',
+      host: 'documentservice.partdp.ir',
+      port: 80
+    },
+    instance: {}
+  },
+  partAuthorizeConfig = {
+    global: {
+      useProxy: true,
+      proxyConfig: {
+        protocol: 'http',
+        host: '192.168.1.75',
+        port: 90,
+        path: '/service/bargain/proxy/1.0.0',
+        headers: {
+          header: {
+            username: 'admin',
+            pass: '123456',
+            type: 'legal',
+            org: 'test'
+          }
+        }
+      }
+    },
+    instance: {}
+  },
+  partUserManagerConfig = {
+    org: 'sahab'
+  },
+  PartUserManager,
+  PartUserManagerInstance,
+  appNamePersian = 'تصدیق اصالت';
+
+exports.nextLink = '185.23.129.52/#!/reset/';
+exports.appName = packageJson.name;
+exports.version = packageJson.version;
+exports.appNamePersian = appNamePersian;
+exports.redisDb1 = redisDb1;
+exports.useCaptcha = {
+  login: false,
+  getCaptcha: true,
+  setPass: false,
+  forgetPassword: false,
+  signUp: false,
+  checkUser: false,
+  changePass: false,
+  changeUser: false
+};
+exports.redisTime = 16 * 60 * 60 * 1000;
+exports.captchaOptions = {
+  host: 'captcha.partdp.ir',
+  port: 80,
+  path: '/service/serviceCaptcha/',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+};
+exports.log = log;
+
+exports.e = {
+  relationError: {
+    info: errorInfo('relationError'),
+    message: {
+      en: 'Database connection error!',
+      fa: 'خطا در برقراری ارتباط با پایگاه داده!'
+    }
+  },
+  duplicateUser: {
+    info: errorInfo('duplicateUser'),
+    message: {
+      en: 'user exists!',
+      fa: 'کاربر با این مشخصات در سیستم موجود است!'
+    }
+  },
+  userNotFound: {
+    info: errorInfo('userNotFound'),
+    message: {
+      en: 'user not exists!',
+      fa: 'اطلاعات کاربر موجود نیست!'
+    }
+  },
+  actionError: {
+    info: errorInfo('actionError'),
+    message: {
+      en: 'action error!',
+      fa: 'عملیات با خطا مواجه شد لطفا مجددا سعی نمایید!'
+    }
+  },
+  invalidOldPass: {
+    info: errorInfo('invalidOldPass'),
+    message: {
+      en: 'invalid oldPassword!',
+      fa: 'رمز عبور قبلی وارد شده اشتباه است!'
+    }
+  },
+  accessDenied: {
+    info: errorInfo('accessDenied'),
+    message: {
+      en: 'access denied!',
+      fa: 'دسترسی غیر مجاز!'
+    }
+  },
+  connectDBError: {
+    info: errorInfo('connectDBError'),
+    message: {
+      en: 'Database connection error!',
+      fa: 'خطا در برقراری ارتباط با پایگاه داده!'
+    }
+  },
+  connectCaptchaError: {
+    info: errorInfo('connectCaptchaError'),
+    message: {
+      en: 'Error while connecting to service captcha!',
+      fa: 'خطا در برقراری ارتباط با سرویس کپچا!'
+    }
+  },
+  duplicateIdNumber: {
+    info: errorInfo('duplicateIdNumber'),
+    message: {
+      en: 'user exists!',
+      fa: 'کد ملی وارد شده، در سامانه تکراری است!'
+    }
+  },
+  duplicateNationalCode: {
+    info: errorInfo('duplicateNationalCode'),
+    message: {
+      en: 'user exists!',
+      fa: 'شناسه ملی وارد شده، در سامانه تکراری است!'
+    }
+  },
+  requestExpired: {
+    info: errorInfo('requestExpired'),
+    message: {
+      en: 'token not exists!',
+      fa: 'اطلاعات کاربری موجود نیست / درخواست منقضی شده است'
+    }
+  },
+  infoNotFound: {
+    info: errorInfo('infoNotFound'),
+    message: {
+      en: 'info not found!',
+      fa: 'اطلاعات مورد نظر موجود نیست!'
+    }
+  },
+  processError: {
+    info: errorInfo('processError'),
+    message: {
+      en: 'Error while processing data!',
+      fa: 'خطا در پردازش اطلاعات!'
+    }
+  },
+  serverError: {
+    info: errorInfo('serverError'),
+    message: {
+      en: 'server error!',
+      fa: 'خطا سرور!'
+    }
+  },
+  fundNotFound: {
+    info: errorInfo('fundNotFound'),
+    message: {
+      en: 'fund info not found!',
+      fa: 'اطلاعات صندوق مورد نظر موجود نیست!'
+    }
+  },
+  justOneRelation: {
+    info: errorInfo('justOneRelation'),
+    message: {
+      en: 'The user is not allowed to have more than one unclaimed relationship',
+      fa: 'کاربر مجاز به داشتن بیش از یک رابطه (لغو نشده) نیست'
+    }
+  },
+  duplicateRelation: {
+    info: errorInfo('duplicateRelation'),
+    message: {
+      en: 'There is a relationship with this person in the database',
+      fa: 'ارتباطی با این شخص در دیتابیس موجود است'
+    }
+  },
+  relationCanceled: {
+    info: errorInfo('relationCanceled'),
+    message: {
+      en: 'this relation canceled',
+      fa: 'این رابطه لغو شده است.'
+    }
+  },
+  fetchInformationError: {
+    info: errorInfo('fetchInformationError'),
+    message: {
+      en: 'error in read data',
+      fa: 'خطا در واکشی اطلاعات.'
+    }
+  },
+  invalidRequest: {
+    info: errorInfo('invalidRequest'),
+    message: {
+      en: 'invalid request',
+      fa: 'درخواست نامعتبر'
+    }
+  },
+  statusNotDefined: {
+    info: errorInfo('statusNotDefined'),
+    message: {
+      en: 'status undefined',
+      fa: 'وضعیت تعریف نشده است'
+    }
+  },
+  requestNotBelongToThisUser: {
+    info: errorInfo('requestNotBelongToThisUser'),
+    message: {
+      en: 'status undefined',
+      fa: 'وضعیت تعریف نشده است'
+    }
+  }
+};
+
+exports.w = {
+  accessDenied: {
+    info: errorInfo('accessDenied'),
+    message: {
+      en: 'access Denied',
+      fa: 'شما دسترسی ویرایش مشخصات فرد مورد نظر را ندارید!'
+    }
+  }
+};
+
+try {
+  PartUserManager = new (require('partUserManager'))({
+    authentication: partAuthenticationInterfaceConfig,
+    document: partDocumentConfig,
+    profile: partProfileInterfaceConfig,
+    samad: partSamadInterfaceConfig,
+    authorize: partAuthorizeConfig
+  });
+  PartUserManagerInstance = new PartUserManager(partUserManagerConfig);
+  exports.PartUserManagerInstance = PartUserManagerInstance;
+}
+catch (e) {
+  log.error(exports.e.actionError, e);
+}
+//---------------------------------------------------------typedef----------------------------------------------------
+/**
+ * @typedef  connectDBError
+ */
+
+
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="userManager_db.html">userManager\db</a></li><li><a href="userManager_http.html">userManager\http</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Mon Oct 30 2017 09:21:28 GMT+0330 (Iran Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

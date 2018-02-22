@@ -1,0 +1,9 @@
+{
+  "moduleType": "app",
+  "name": "appTemplate",
+  "version": "0.0.1",
+  "main": "./index.js",
+  "dependencies": {
+    "partLogger": "^3.1.1"
+  }
+}

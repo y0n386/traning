@@ -1,0 +1,103 @@
+<div class="mainContainer">
+    <div id="banner">
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <center>
+                    <button ng-click="vm.logOut()" class="btn fa-sign-in" style="float: left">خروج</button>
+                    <center>
+                        <img src="./public/admin/assets/images/rasam-new-transparent-ful-black.png" width="300px"
+                             height="170px">
+                    </center>
+            </div>
+        </div>
+    </div>
+    <div class="tab_container">
+
+        <input class="hiddenClass" style="height: 45px" id="tab3" type="radio" name="tabs">
+        <label for="tab3"><img id="access_icon" src="./public/admin/assets/images/Access-2-icon.png" class="tabImg">
+            فایل صندوق های سرمایه گذاری در اوراق بهادار</label>
+
+        <input class="hiddenClass" id="tab2" style="height: 45px" type="radio" name="tabs">
+        <label for="tab2"><img src="./public/admin/assets/images/Excel-2-icon.png" class="tabImg">
+            فایل ســــودهای نقـــدی</label>
+
+        <input class="hiddenClass" id="tab1" style="height: 45px" type="radio" name="tabs" checked>
+        <label for="tab1">
+            <img src="./public/admin/assets/images/Excel-2-icon.png" class="tabImg">
+            فایل ســـپرده گذاران حقیـــقی و
+            حقوقـــی</label>
+
+        <section id="content1" class="tab-content">
+            <div>
+                <div class="halfDiv rightAlign">
+                    <!--<label class="margin_bottom" style="display: block">فایل اکسل</label>-->
+                    <js-xls style="display: block;float: right" on-read="read1(workbook)" on-error="error1;"></js-xls>
+                </div>
+                <div class="halfDiv rightAlign">
+                    <label class="margin_bottom" style="display: block">
+                        تاریخ فایل های ارسالی
+                    </label>
+                    <input class="input" pa-datepicker id="uploadDate" ng-model="vm.uploadDate" file-model="myFile"
+                           minlength="10" maxlength="10" name="uploadDate" required>
+                    {{upload.date}}
+                    <p ng-show="uploadDate.$valid">تاریخ فایل را وارد کنید !</p>
+                </div>
+            </div>
+            <div style="margin-top:20px; text-align: left">
+                <button class="btn_blue btn"
+                        ng-click="vm.sendRealLegalInvestorsExcel()" type="submit">بارگذاری اکســــل
+                </button>
+            </div>
+        </section>
+
+        <section id="content2" class="tab-content">
+            <div>
+                <div class="halfDiv rightAlign">
+                    <!--<label class="margin_bottom" style="display: block">فایل اکسل</label>-->
+                    <js-xls style="display: block;float: right;" on-read="read2(workbook)" on-error="error2;"></js-xls>
+                </div>
+                <div class="halfDiv rightAlign">
+                    <button ng-json-export-excel class="btn btn_green" ng-if="dataAvailable"
+                            report-fields="headerExcel"
+                            data="dataList"
+                            separator=","
+                            filename="'Fund-List'">
+                        ترتیب لیست صندوق ها
+                    </button>
+                </div>
+            </div>
+            <div style="margin-top:20px; text-align: left">
+                <button class="btn_blue btn" ng-click="vm.sendFundInfoExcel()" type="submit">بارگذاری اکســــل
+                </button>
+            </div>
+        </section>
+
+        <section id="content3" class="tab-content">
+            <div>
+                <div class="halfDiv rightAlign">
+                    <!--<pa-file-select class="input_file" id="nationalCardImage" accept="*/*" input-model="vm.uploadedFile"
+                                    btn-title="انتخاب فایل" on-change="vm.changeInputFile()"></pa-file-select>-->
+
+                    <label for="input" class="fileContainer" style="margin-left: 459px">انتــخاب فایـــل <input
+                            type="file" id="input" ng-model="vm.uploadedFile"
+                            file-model="myFile"
+                            name="uploadFile"
+                            pa-file-select
+                            input-model="vm.SelectedFile2"
+                    >
+                    </label>
+
+                    <label style="color:black;">
+                        {{vm.SelectedFile2.name}}
+
+                    </label>
+
+                </div>
+                <div class="halfDiv rightAlign">
+                </div>
+            </div>
+            <button class="btn_blue btn" ng-click="vm.sendFundInfoAccess(uploadForm)" type="submit">بارگذاری اکســس
+            </button>
+        </section>
+    </div>
+</div>

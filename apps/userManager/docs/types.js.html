@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: types.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: types.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Created by Majid on 9/3/2017.
+ */
+
+/**
+ * توصیف کننده محل روی دادن خطا
+ * @typedef {Object} eventInfo
+ * @property {!string} code کد رویداد
+ * @property {!string} sourceType نوع محل رویداد
+ * @property {!string} sourceName نام محل رویداد
+ * @property {!string} level سطح رویداد
+ */
+
+/**
+ * ارائه‌دهنده‌ی پیام خطا
+ * @typedef {Object|string[]} eventMessage
+ * @property {?string} [fa] متن فارسی خطا
+ * @property {!string} [en] متن انگلیسی خطا
+ */
+
+/**
+ * پارامتر ورودی برای تنظیمات معتبر نمی باشد!
+ * @typedef {Object} invalidConfigParam
+ * @property {!eventInfo} info
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * خطا در انجام عملیات
+ * @typedef {Object} actionError
+ * @property {!eventInfo} info
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * کاربر تکراری است
+ * @typedef {Object} duplicateUser
+ * @property {!eventInfo} info
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * خطا در برقراری با سرویس کپچا
+ * @typedef {Object} connectCaptchaError
+ * @property {!eventInfo} info
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * درخواست منقضی شده است
+ * @typedef {Object} requestExpired
+ * @property {!eventInfo} info
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * خطا در پردازش اطلاعات!
+ * @typedef {Object} processError
+ * @property {!string} code کد خطا = "processError"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * خطا در برقراری ارتباط با سرویس پروفایل!
+ * @typedef {Object} authenticationConnError
+ * @property {!string} code کد خطا = "authenticationConnError"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * خطا در برقراری ارتباط با پایگاه داده!
+ * @typedef {Object} dbConnError
+ * @property {!string} code کد خطا = "dbConnError"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * خطای اعتبارسنجی داده های ورودی
+ * @typedef {Object} validationError
+ * @property {!string} code کد خطا = "validationError"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * رمز کاربر اشتباه است!
+ * @typedef {Object} wrongPassword
+ * @property {!string} code کد خطا = "wrongPassword"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * نام کاربری/رمز سامانه اشتباه است!
+ * @typedef {Object} wrongUserPass
+ * @property {!string} code کد خطا = "wrongUserPass"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * دسترسی غیر مجاز!
+ * @typedef {Object} accessDenied
+ * @property {!string} code کد خطا = "accessDenied"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * سامانه یافت نشد!
+ * @typedef {Object} systemNotFound
+ * @property {!string} code کد خطا = "systemNotFound"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * کاربر یافت نشد!
+ * @typedef {Object} userNotFound
+ * @property {!string} code کد خطا = "userNotFound"
+ * @property {!eventMessage} [message]
+ */
+
+/**
+ * عملیات موفق
+ * @typedef {Object} success
+ * @property {!string} status وضعیت = "success"
+ * @property {!number} shamsiDate تاریخ
+ */
+
+/**
+ * آبجکت نام کاربری و رمز
+ * @typedef {Object} usernamePasswordObject
+ * @property {!string} username نام کاربری
+ * @property {!string} password رمز کاربر جدید: در صورتی که هنگام ایجاد کاربر، رمز توسط سامانه ایجاد شده باشد، مقدار این فیلد برابر با رمز تولید شده و در غیر اینصورت برابر با تعدادی ستاره خواهد بود.
+ */
+
+/**
+ * درج کاربر
+ * @typedef {Object} addUserSuccess
+ * @property {!usernamePasswordObject} data نام کاربری و رمز کاربر تازه ایجاد شده
+ * @property {!string} status وضعیت = "success"
+ * @property {!number} shamsiDate تاریخ
+ */
+
+/**
+ * تنظیم وضعیت کاربر
+ * @typedef {Object} setStatusSuccess
+ * @property {!string} status وضعیت = "success"
+ * @property {!number} shamsiDate تاریخ
+ */
+
+/**
+ * حذف کاربر
+ * @typedef {Object} removingUser
+ * @property {!string} username نام کاربری
+ */
+
+/**
+ * کاربر
+ * @typedef {Object} user
+ * @property {!string} username نام کاربری
+ * @property {!string} status وضعیت
+ */
+
+/**
+ * دریافت موفق همه کاربران
+ * @typedef {Object} getAllUsersSuccess
+ * @property {!user[]} data لیست کاربران
+ * @property {!string} status وضعیت = "success"
+ * @property {!number} shamsiDate تاریخ
+ */
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="userManager_db.html">userManager\db</a></li><li><a href="userManager_http.html">userManager\http</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Mon Oct 30 2017 09:21:28 GMT+0330 (Iran Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

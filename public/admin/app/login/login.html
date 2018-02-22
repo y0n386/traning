@@ -1,0 +1,56 @@
+<div class="wrapper">
+    <div class="container">
+
+        <img src="./public/admin/assets/images/rasam-new-transparent-ful-black.png" width="300px" height="170px">
+        <form class="form" name="form">
+
+            <input style="width: 100%" class="inputField" name="username" ng-model="vm.information.username" type="text"
+                   required ng-class='{req :form.username.$touched && form.username.$invalid }'
+                   placeholder=" نام کاربری">
+
+            <span ng-show=" form.username.$touched && form.username.$invalid "> نام کاربری را وارد کنید</span>
+
+            <input style="width: 100%" class="inputField" name="password" ng-model="vm.information.password"
+                   type="password" required ng-class='{req :form.password.$touched && form.password.$invalid }'
+                   placeholder="گذرواژه">
+
+            <span ng-show=" form.password.$touched && form.password.$invalid "> رمز عبور را وارد کنید</span>
+
+            <div>
+                <div style="width: 48%;display: inline-block">
+
+                    <img id="refresh" src="./public/admin/assets/images/refresh.png" ng-click="vm.getCaptcha()"> <img
+                        style="background: white"
+                        src="{{vm.captcha}}">
+
+                </div>
+                <div style="width: 48%;display: inline-block">
+                    <input class="captcha" name="captcha" ng-model="vm.information.captcha.value" type="text" required
+                           ng-class='{req :form.captcha.$touched && form.captcha.$invalid }'
+                           placeholder="متن رو به رو را وارد کنید">
+                    <span ng-show=" form.captcha.$touched && form.captcha.$invalid ">عبارت امنیتی  را وارد کنید</span>
+
+                </div>
+
+            </div>
+
+            <button style="width: 100%" type="submit" id="login-button" ng-disabled="form.$invalid"
+                    ng-click="vm.login()">ورود
+            </button>
+        </form>
+    </div>
+
+    <ul class="bg-bubbles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+

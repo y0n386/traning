@@ -1,0 +1,1 @@
+exports.httpHandlers = require('./httpHandlers.js').httpHandlers;
